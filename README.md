@@ -28,7 +28,7 @@
 ### 1. **Create a discord bot using the Discord developer portal**
 1. Turn on ‘Developer mode’ in your Discord account settings.
 2. Click on ‘Discord API’.
-3. In the Developer portal, click on ‘[Applications](https://discord.com/developers/applications)’. Log in again and then, back in the ‘Applications’ menu, click on ‘New Application’.
+3. In the Developer portal, click on ‘[Applications](https://discord.com/developers/applications)’, then click on ‘New Application’.
 4. Name the bot and then click ‘Create’.
 5. Go to the ‘Bot’ menu and generate a token using ‘Add Bot’.
 6. Program your bot using the bot token and save the file.
@@ -63,6 +63,7 @@
 
 ***Developent:***
 - Double-click on `start.bat` to launch.
+
 
 
 
