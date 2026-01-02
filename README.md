@@ -1,4 +1,4 @@
-# SDXL-DiscordBot
+# ComfyUI-DiscordBot
 
 
 <p float="left" align="center">
@@ -63,5 +63,6 @@
 
 ***Developent:***
 - Double-click on `start.bat` to launch.
+
 
 
