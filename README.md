@@ -51,5 +51,5 @@
 - **Note for Windows users:** If Windows Defender warns about an "unknown publisher", you can safely ignore it. You might also need to whitelist this app in your antivirus software.
 
 ***Developent:***
-- Double-click on `start_bot_py.bat` to launch.
-- **Note:** If using portable ComfyUI, run `start_all.bat` pointing to your local `/ComfyUI_windows_portable` directory.
+- Double-click on `start.bat` to launch.
+
