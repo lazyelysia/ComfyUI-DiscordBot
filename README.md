@@ -53,6 +53,3 @@
 ***Developent:***
 - Double-click on `start_bot_py.bat` to launch.
 - **Note:** If using portable ComfyUI, run `start_all.bat` pointing to your local `/ComfyUI_windows_portable` directory.
-
-## Advanced setup
-For more advanced configuration and custom workflows visit the [wiki](https://github.com/dab-bot/ComfyUI-SDXL-DiscordBot/wiki/Advanced-config)
