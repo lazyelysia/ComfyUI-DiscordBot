@@ -37,7 +37,7 @@
 10. Select your server to add your bot to it.
 
 ### 2. **Download & Extract**
-- [Download the latest executable](https://github.com/WillAngus/ComfyUI-SDXL-DiscordBot/releases) suitable for your OS.
+- [Download the latest executable](https://github.com/lazyelysia/ComfyUI-DiscordBot/releases) suitable for your OS.
 - Extract the zip file to your desired location.
 
 ### 3. **Configuration**
@@ -63,6 +63,7 @@
 
 ***Developent:***
 - Double-click on `start.bat` to launch.
+
 
 
 
