@@ -62,8 +62,9 @@
 - **Note for Windows users:** If Windows Defender warns about an "unknown publisher", you can safely ignore it. You might also need to whitelist this app in your antivirus software.
 
 ***Developent:***
-- Install dependencies `pip install -r requirements.txt` 
-- Double-click on `start.bat` to launch.
+- Simply run `setup.bat' and wait for the terminal to close.
+- Then double-click on `start.bat` to launch.
+
 
 
 
