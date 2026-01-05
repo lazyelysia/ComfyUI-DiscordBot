@@ -42,7 +42,7 @@
 
 ### 3. **Configuration**
 - Open `config.properties` using a text editor. If cloned from github, rename and use `config.properties.example`.
-- Set your Discord bot token: Find `[BOT][TOKEN]` and replace the placeholder with your token.
+- Set your Discord bot token: Find `[BOT][TOKEN]` and replace the placeholder with your bots API token.
 - Enter the filename of your checkpoint, lora and VAE. (This step can be done in the discord client with slash commands).
 
 ### 4. **Run locally via ComfyUI**
@@ -64,6 +64,7 @@
 ***Developent:***
 - Simply run `setup.bat` and wait for the terminal to close.
 - Then double-click on `start.bat` to launch.
+
 
 
 
