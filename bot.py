@@ -166,4 +166,8 @@ async def choices(interaction:discord.Interaction,options:app_commands.Choice[st
     await interaction.response.send_message(f"{interaction.user.mention} Lora changed to: `{options.value}` at `{strength}`")
 
 # run the bot
-client.run(TOKEN)
+try:
+    client.run(TOKEN)
+except Exception as error:
+    print("An exception occurred:", error)
+    os.system('pause')

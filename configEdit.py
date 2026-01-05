@@ -12,16 +12,14 @@ def read_config():
 
 def setup_config():
     if not os.path.exists('config.properties'):
-        generate_default_config()
+        print("[ERROR] No config file: Please rename 'config.properties.example' to 'config.properties' and restart.")
+        os.system('pause')
 
     if not os.path.exists('./out'):
         os.makedirs('./out')
 
     config = read_config()
     return config['BOT']['TOKEN'], config['BOT']['SDXL_SOURCE']
-
-def generate_default_config():
-    print("[ERROR] No config file: Please rename 'config.properties.example' to 'config.properties' and restart.")
 
 def replace_all(file,searchExp,replaceExp):
     for line in fileinput.input(file, inplace=1):
@@ -40,9 +38,14 @@ def set_value(header: str, key: str, value: str):
     replace_all('config.properties', key+'='+current_value, key+'='+value)
 
 def get_models(type):
-    arr = []
-    dir = read_config().get('LOCAL', 'COMFY_DIR') + r'\models' + '\\' + type
-    for file in os.listdir(dir):
-        if file.endswith(".safetensors"):
-            arr.append(os.path.join(file))
+    try:
+        arr = []
+        comfy_root = read_config().get('LOCAL', 'COMFY_DIR')
+        dir = comfy_root + r'\models' + '\\' + type
+        for file in os.listdir(dir):
+            if file.endswith(".safetensors"):
+                arr.append(os.path.join(file))
+    except Exception as error:
+        print("An exception occurred:", error)
+        os.system('pause')
     return arr
