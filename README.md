@@ -47,7 +47,6 @@
 
 ### 4. **Run locally via ComfyUI**
 - Set your ComfyUI URL: Replace the placeholder in `[LOCAL][SERVER_ADDRESS]` with your ComfyUI URL (default is `127.0.0.1:8188`).
-- Update the source: Change `[BOT][SDXL_SOURCE]` to 'LOCAL'.
 - Enter your ComfyUI directory eg. `COMFY_DIR=C:\Users\YOUR_USERNAME\Documents\ComfyUI`
 - Download and add models to ComfyUI, eg:
   - [Illustrious-XL](https://civitai.com/models/795765?modelVersionId=889818) → `checkpoints` folder
@@ -64,6 +63,7 @@
 ***Developent:***
 - Simply run `setup.bat` (windows) or `setup_linux.sh` (linux) the terminal will close once completed on windows.
 - Then double-click on `start.bat` or run `python bot.py` in your terminal to launch.
+
 
 
 
