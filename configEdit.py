@@ -3,6 +3,7 @@ import sys
 import configparser
 import os
 import time
+from sys import platform
 
 config = configparser.ConfigParser()
 
@@ -41,11 +42,15 @@ def get_models(type):
     try:
         arr = []
         comfy_root = read_config().get('LOCAL', 'COMFY_DIR')
-        dir = comfy_root + r'\models' + '\\' + type
+        if platform == "linux" or platform == "linux2":
+            dir = comfy_root + "/models" + "/" + type
+        elif platform == "win32":
+            dir = comfy_root + r'\models' + '\\' + type
         for file in os.listdir(dir):
             if file.endswith(".safetensors"):
                 arr.append(os.path.join(file))
     except Exception as error:
         print("An exception occurred:", error)
         os.system('pause')
+
     return arr
