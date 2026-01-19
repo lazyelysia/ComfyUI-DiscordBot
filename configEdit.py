@@ -14,7 +14,8 @@ def read_config():
 def setup_config():
     if not os.path.exists('config.properties'):
         print("[ERROR] No config file: Please rename 'config.properties.example' to 'config.properties' and restart.")
-        os.system('pause')
+        if platform == "win32":
+            os.system('pause')
 
     if not os.path.exists('./out'):
         os.makedirs('./out')
@@ -51,6 +52,7 @@ def get_models(type):
                 arr.append(os.path.join(file))
     except Exception as error:
         print("An exception occurred:", error)
-        os.system('pause')
-
+        if platform == "win32":
+            os.system('pause')
     return arr
+
