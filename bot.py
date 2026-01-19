@@ -170,4 +170,5 @@ try:
     client.run(TOKEN)
 except Exception as error:
     print("An exception occurred:", error)
-    os.system('pause')
+    if platform == "win32":
+        os.system('pause')
