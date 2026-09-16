@@ -113,7 +113,7 @@ class ImageGenerator:
 # ---------------------------------------------------------------------------
 # Node Population
 # ---------------------------------------------------------------------------
-def _trace_to_text_node(workflow: Dict[str, Any], start_node_id: str) -> Optional[str]:
+def trace_to_text_node(workflow: Dict[str, Any], start_node_id: str) -> Optional[str]:
     """Recursively traces backward from sampler links to find origin text encoders."""
     node = workflow.get(str(start_node_id))
     if not node:
@@ -128,13 +128,13 @@ def _trace_to_text_node(workflow: Dict[str, Any], start_node_id: str) -> Optiona
         if isinstance(value, list) and len(value) > 0:
             parent_id = str(value[0])
             if parent_id in workflow:
-                result = _trace_to_text_node(workflow, parent_id)
+                result = trace_to_text_node(workflow, parent_id)
                 if result:
                     return result
     return None
 
 
-def _find_prompt_node_ids(workflow: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
+def find_prompt_node_ids(workflow: Dict[str, Any]) -> Tuple[Optional[str], Optional[str]]:
     """Finds positive and negative prompt node IDs via KSampler links."""
     pos_id, neg_id = None, None
 
@@ -144,10 +144,10 @@ def _find_prompt_node_ids(workflow: Dict[str, Any]) -> Tuple[Optional[str], Opti
             inputs = node.get("inputs", {})
 
             if "positive" in inputs and isinstance(inputs["positive"], list):
-                pos_id = _trace_to_text_node(workflow, str(inputs["positive"][0]))
+                pos_id = trace_to_text_node(workflow, str(inputs["positive"][0]))
 
             if "negative" in inputs and isinstance(inputs["negative"], list):
-                neg_id = _trace_to_text_node(workflow, str(inputs["negative"][0]))
+                neg_id = trace_to_text_node(workflow, str(inputs["negative"][0]))
 
             if pos_id or neg_id:
                 break
@@ -173,6 +173,7 @@ def populate_nodes(
 
     # 1. Read config values using .get()
     checkpoint_name = get_cfg('CHECKPOINT', 'checkpoint_name')
+    diffusion_model_name = get_cfg('DIFFUSION_MODEL', 'diffusion_model_name')
     lora_name = get_cfg('LORA', 'lora_name')
     lora_strength = float(get_cfg('LORA', 'strength', '1.0'))
     vae_name = get_cfg('VAE', 'vae_name')
@@ -193,7 +194,7 @@ def populate_nodes(
     full_negative_prompt = negative_prompt if negative_prompt is not None else neg_template
 
     # 3. Dynamic Prompt Connection Tracing
-    pos_node_id, neg_node_id = _find_prompt_node_ids(workflow)
+    pos_node_id, neg_node_id = find_prompt_node_ids(workflow)
 
     # 4. Traverse & Update Nodes
     for node_id, node in workflow.items():
@@ -203,18 +204,28 @@ def populate_nodes(
         # A. Prompts
         if str(node_id) == str(pos_node_id):
             inputs["text"] = full_positive_prompt
+            print(f"Positive: {full_positive_prompt}")
         elif str(node_id) == str(neg_node_id):
             inputs["text"] = full_negative_prompt
+            print(f"Negative: {full_negative_prompt}")
 
         # B. Seed Node
         elif class_type in ("SeedNode", "KSamplerSeed") or "seed" in class_type.lower():
             if seed is not None and "seed" in inputs:
                 inputs["seed"] = seed
+                print(f"Seed: {seed}")
 
-        # C. Checkpoint Loader
+        # C1. Checkpoint Loader
         elif class_type in ("CheckpointLoaderSimple", "CheckpointLoader"):
             if checkpoint_name:
                 inputs["ckpt_name"] = checkpoint_name
+                print(f"Checkpoint: {checkpoint_name}")
+
+        # C2. Diffusion Model Loader
+        elif class_type in ("UNETLoader", "DiffusionModel"):
+            if diffusion_model_name:
+                inputs["unet_name"] = diffusion_model_name
+                print(f"Diffusion Model: {diffusion_model_name}")
 
         # D. LoRA Loader
         elif class_type in ("LoraLoader", "LoraLoaderModelOnly"):
@@ -222,13 +233,16 @@ def populate_nodes(
                 inputs["lora_name"] = lora_name
                 if "strength_model" in inputs:
                     inputs["strength_model"] = lora_strength
+                    print(f"Lora: {lora_name} with strength {lora_strength}")
                 if "strength_clip" in inputs:
                     inputs["strength_clip"] = lora_strength
+                    print(f"Lora Strength (CLIP): {lora_name} with strength {lora_strength}")
 
         # E. VAE Loader
         elif class_type == "VAELoader":
             if vae_name:
                 inputs["vae_name"] = vae_name
+                print(f"VAE: {vae_name}")
 
         # F. KSampler Parameters
         elif "KSampler" in class_type or "SamplerCustom" in class_type:
@@ -267,11 +281,6 @@ async def generate_images(prompt: str, negative_prompt: str, seed: int) -> List[
     try:
         await generator.connect()
         print('----- Generating Image -----')
-        print(f"Checkpoint: {config_loader.get('CHECKPOINT', 'checkpoint_name')}")
-        print(f"Lora: {config_loader.get('LORA', 'lora_name')}: {config_loader.get('LORA', 'strength')}")
-        print(f"Prompt: {prompt}")
-        print(f"Negative Prompt: {negative_prompt}")
-        print(f"Seed: {seed}")
         populate_nodes(workflow, prompt, negative_prompt, seed)
         return await generator.get_images(workflow)
     finally:

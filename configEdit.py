@@ -74,7 +74,7 @@ def setup_config() -> Tuple[str, str]:
 def get_models(folder_type: str) -> list[str]:
     """
     Recursively fetch models from ComfyUI subdirectories.
-    folder_type: 'loras' or 'checkpoints'
+    folder_type: 'loras' / 'checkpoints' / 'diffusion_models'
     """
     try:
         # Fetch comfy_dir from [LOCAL] section in config.properties
@@ -86,7 +86,8 @@ def get_models(folder_type: str) -> list[str]:
     # Map folder types to standard ComfyUI model folder names
     folder_map = {
         'loras': 'loras',
-        'checkpoints': 'checkpoints'
+        'checkpoints': 'checkpoints',
+        'diffusion_models': 'diffusion_models'
     }
 
     subfolder = folder_map.get(folder_type.lower(), folder_type.lower())
@@ -104,7 +105,7 @@ def get_models(folder_type: str) -> list[str]:
         for file in files:
             if file.lower().endswith(model_extensions):
                 full_path = os.path.join(root, file)
-                # Calculate relative path (e.g., "anima/Flaccid_Futa_Anima_v3.safetensors")
+                # Calculate relative path
                 rel_path = os.path.relpath(full_path, target_dir)
                 clean_path = rel_path.replace("\\", "/")
                 models.append(clean_path)

@@ -24,52 +24,38 @@ tree = app_commands.CommandTree(client)
 if IMAGE_SOURCE == "LOCAL":
     from imageGen import generate_images, upscale_image, generate_alternatives
 
+# Dynamic Autocomplete function for slash commands
+def make_autocomplete(folder_type: str):
+    """ Returns a proper Discord autocomplete callback function."""
 
-# Dynamic autocomplete fetchers for slash commands
-async def lora_autocomplete(
-    interaction: discord.Interaction, 
-    current: str
-) -> List[app_commands.Choice[str]]:
-    loras = get_models('loras')
-    current_lower = current.lower().strip()
-    choices = []
+    async def autocomplete_callback(
+        interaction: discord.Interaction, current: str
+    ) -> List[app_commands.Choice[str]]:
+        models = get_models(folder_type)
+        current_lower = current.lower().strip()
+        choices = []
 
-    for lora in loras:
-        if not current_lower or current_lower in lora.lower():
-            # Truncate label safely if total path exceeds 100 chars
-            display_name = lora if len(lora) <= 100 else f"...{lora[-97:]}"
-            choices.append(app_commands.Choice(name=display_name, value=lora[:100]))
-            
-        if len(choices) >= 25:  # Discord UI hard limit
-            break
+        for model in models:
+            if not current_lower or current_lower in model.lower():
+                display_name = (
+                    model if len(model) <= 100 else f"...{model[-97:]}"
+                )
+                choices.append(
+                    app_commands.Choice(name=display_name, value=model[:100])
+                )
 
-    return choices
+            if len(choices) >= 25:
+                break
 
+        return choices
 
-async def checkpoint_autocomplete(
-    interaction: discord.Interaction, 
-    current: str
-) -> List[app_commands.Choice[str]]:
-    checkpoints = get_models('checkpoints')
-    current_lower = current.lower().strip()
-    choices = []
-
-    for ckpt in checkpoints:
-        if not current_lower or current_lower in ckpt.lower():
-            display_name = ckpt if len(ckpt) <= 100 else f"...{ckpt[-97:]}"
-            choices.append(app_commands.Choice(name=display_name, value=ckpt[:100]))
-            
-        if len(choices) >= 25:
-            break
-
-    return choices
+    return autocomplete_callback
 
 
 @client.event
 async def on_ready():
     await tree.sync()
     print(f'Logged in as {client.user.name} ({client.user.id})')
-
 
 # ---------------------------------------------------------------------------
 # UI Components & Buttons
@@ -230,10 +216,17 @@ async def cmd_size(interaction: discord.Interaction, width: int, height: int):
 
 
 @tree.command(name="checkpoint", description="Change the selected checkpoint for image generation")
-@app_commands.autocomplete(checkpoint=checkpoint_autocomplete)
+@app_commands.autocomplete(checkpoint=make_autocomplete('checkpoints'))
 async def cmd_checkpoint(interaction: discord.Interaction, checkpoint: str):
     config_loader.set_value('CHECKPOINT', 'CHECKPOINT_NAME', checkpoint)
     await interaction.response.send_message(f"{interaction.user.mention} Checkpoint changed to: `{checkpoint}`")
+
+
+@tree.command(name="diffusion_model", description="Change the selected diffusion model for image generation")
+@app_commands.autocomplete(diffusion_model=make_autocomplete('diffusion_models'))
+async def cmd_diffusion_model(interaction: discord.Interaction, diffusion_model: str):
+    config_loader.set_value('DIFFUSION_MODEL', 'DIFFUSION_MODEL_NAME', diffusion_model)
+    await interaction.response.send_message(f"{interaction.user.mention} Diffusion model changed to: `{diffusion_model}`")
 
 
 @tree.command(name="steps", description="Change the amount of steps for image generation")
@@ -242,8 +235,15 @@ async def cmd_steps(interaction: discord.Interaction, steps: int):
     await interaction.response.send_message(f"{interaction.user.mention} Steps changed to: `{steps}`")
 
 
+@tree.command(name="sampler", description="Change the sampler for image generation")
+async def cmd_sampler(interaction: discord.Interaction, sampler: str):
+    config_loader.set_value('BASE_SAMPLER_CFG', 'SAMPLER', sampler)
+    config_loader.set_value('REF_SAMPLER_CFG', 'SAMPLER', sampler)
+    await interaction.response.send_message(f"{interaction.user.mention} Sampler changed to: `{sampler}`")
+
+
 @tree.command(name="lora", description="Change the selected lora for image generation")
-@app_commands.autocomplete(lora=lora_autocomplete)
+@app_commands.autocomplete(lora=make_autocomplete('loras'))
 @app_commands.describe(strength='The strength of the lora')
 async def cmd_lora(interaction: discord.Interaction, lora: str, strength: float):
     config_loader.set_value('LORA', 'LORA_NAME', lora)
