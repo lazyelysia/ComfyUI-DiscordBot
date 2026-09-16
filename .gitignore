@@ -1,0 +1,5 @@
+comfyUI-workflows/usr
+.venv
+out/
+config.properties
+__pycache__
