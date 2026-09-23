@@ -6,7 +6,7 @@
   <img src="https://raw.githubusercontent.com/WillAngus/ComfyUI-SDXL-DiscordBot/refs/heads/main/assets/commands.jpg" height="300px" align="top" />
 </p>
 
-**SDXL-DiscordBot** is a Discord bot designed specifically for image generation using any SDXL/Illustrious based model. It's inspired by the features of the Midjourney Discord bot, offering capabilities like text-to-image generation, variations in outputs, and the ability to upscale, with hires. fix.
+**ComfyUI-DiscordBot** is a Discord bot designed specifically for image generation using any SDXL/Illustrious based model. It's inspired by the features of the Midjourney Discord bot, offering capabilities like text-to-image generation, variations in outputs, and the ability to upscale, with hires. fix.
 
 <div align="center">
 
